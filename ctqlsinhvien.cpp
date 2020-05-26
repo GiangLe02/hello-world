@@ -50,8 +50,8 @@ void thongkedtb (LIST L);
 void timTen (LIST L);
 void timMSSV (LIST L);
 void xoa (LIST L);
-void chen (LIST &L);
-void xuatFile (LIST L,  char fileName1[]);
+void selectionSort (LIST &L);
+void xuatFile (LIST L);
 void menu();
 
 int main()
@@ -83,7 +83,7 @@ void nhap (sv &x)
     gets(x.MSSV);
 
     printf("\nNhap diem trung binh: ");
-    scanf("%f", x.dtb);
+    scanf("%f", &x.dtb);
 }
 
 /* tao them mot thong tin sinh vien o cuoi
@@ -110,8 +110,10 @@ void nhapN (LIST &L)
 {
     sv x;
     char kt;
+
     printf("\nNhan phim bat ki de tiep tuc nhap.");
     printf("\nNhan 0 de dung nhap.");
+
     do
     {
         kt=getch();
@@ -120,8 +122,8 @@ void nhapN (LIST &L)
             break;
         }
         nhap (x);
-        NODE *p=CreateNode(x);
-        AddLast(L,p);
+        NODE *p = CreateNode(x);
+        AddLast(L, p);
     } while (1);
 }
 
@@ -140,12 +142,13 @@ void xuatN (LIST L)
 {
     NODE* p;
     p = L.pHead;
+    printf("\n\t\t---------------------\n");
     while(p != NULL)
     {
-        printf("\t\t---------------------");
         xuat (p -> info);
         p = p -> pNext;
     }
+    printf("\n\t\t---------------------\n");
 }
 
  /* in ra man hinh sinh vien co dtb cao nhat
@@ -173,23 +176,26 @@ void maxdtb (LIST L)
             max = p;
             dem++;
         }
-        printf("\nSinh vien co diem trung binh cao nhat la: \n");
 
-        if(dem = 0)
+        p = p -> pNext;
+    }
+    printf("\n\t\tSinh vien co diem trung binh cao nhat la: \n");
+
+    if(dem == 0)
+    {
+        xuat(max->info);
+    }
+    else
+    {
+        NODE* q = L.pHead;
+        while( q != NULL)
         {
-            xuat(max->info);
-        }
-        else
-        {
-            NODE* q = L.pHead;
-            while( q != NULL)
+            if(q-> info.dtb == max-> info.dtb)
             {
-                 if(q-> info.dtb == max-> info.dtb)
-                 {
-                     xuat(q -> info);
-                 }
-                 q = q-> pNext;
+                xuat(q -> info);
+                printf("\n\n");
             }
+            q = q-> pNext;
         }
     }
 }
@@ -215,10 +221,10 @@ void thongkedtb (LIST L)
 
     if (dem == 0)
     {
-        printf("\nKhong co sinh vien nao co diem trung bình >= 5.");
+        printf("\n\n\t\tKhong co sinh vien nao co diem trung bình >= 5.\n\n");
     }else
     {
-        printf("\nCó %d sinh vien co diem trung binh >= 5", dem);
+        printf("\n\n\t\tCo %d sinh vien co diem trung binh >= 5\n\n", dem);
     }
 }
 
@@ -236,22 +242,21 @@ void timTen (LIST L)
     printf("\nNhap ten sinh vien can tim: ");
     fflush(stdin);
     gets(k);
+
     p = L.pHead;
 
     while (p != NULL)
     {
         if(strcmp(k, p-> info.ten)==0)
         {
+            printf("\nDa tim thay sinh vien!!");
+            xuat(p -> info);
             dem ++;
         }
         p = p -> pNext;
     }
 
-    if(dem != 0)
-    {
-        printf("\nDa tim thay sinh vien!!");
-        xuat(p -> info);
-    } else
+    if(dem == 0)
     {
         printf("\nKhong tim thay sinh vien nay");
     }
@@ -296,6 +301,7 @@ void xoa (LIST L)
     char a[20];
     char b[10];
     p = L.pHead;
+    q = NULL;
 
     printf("\nNhap thong tin sinh vien can xoa");
     printf("\nTen: ");
@@ -311,11 +317,14 @@ void xoa (LIST L)
         {
             if(strcmp(b, p -> info.MSSV) == 0)
             {
-                q = p;
                 break;
             }
-            p = p -> pNext;
+        }else
+        {
+            printf("\nKo co sv can xoa.");
         }
+        q = p;
+        p = p -> pNext;
     }
 
     if(q!=NULL)
@@ -341,9 +350,9 @@ void xoa (LIST L)
     }
 }
 
- /* chen them thong tin sinh vien
+ /* selectionSort sap xep thong tin sinh vien
  */
-void chen (LIST &L)
+void selectionSort (LIST &L)
 {
     NODE *p,*q,*min;
     p = L.pHead;
@@ -371,7 +380,7 @@ void chen (LIST &L)
 void menu()
 {
     LIST L;
-    NODE *p,*q,*moi;
+    NODE *p , *q, *moi;
     sv x;
     char choice1, choice2;
     CreateList(L);
@@ -388,6 +397,7 @@ void menu()
         printf("\n\t6. Xoa sv");
         printf("\n\t7. Sap xep ds");
         printf("\n\t8. Chen sv");
+        printf("\n\t9. Xuat file");
         printf("\n\tNhap 0 de thoat");
 
         choice1 = getch();
@@ -418,9 +428,8 @@ void menu()
 
             case '5':
                 {
-                    printf("\n\t1. Tim sinh vien theo ten");
+                    printf("\n\n\t1. Tim sinh vien theo ten");
                     printf("\n\t2. Tim sinh vien theo ma so");
-                    printf("\n\tNhan 0 de thoat");
                     choice2 = getch();
 
                     switch(choice2)
@@ -435,8 +444,6 @@ void menu()
                                 timMSSV(L);
                                 break;
                             }
-                        case '0': exit(1);
-                        default: printf("\nNhap lai.");
                     }
                     break;
                 }
@@ -451,7 +458,7 @@ void menu()
 
             case '7':
                 {
-                    chen(L);
+                    selectionSort(L);
                     printf("\nDs sau khi sap xep: ");
                     xuatN(L);
                     break;
@@ -465,13 +472,18 @@ void menu()
 
                     NODE *t = CreateNode(them);
                     AddLast(L, t);
-                    chen(L);
+                    selectionSort(L);
 
                     printf("\nDs sau khi them :");
                     xuatN(L);
                     break;
                 }
 
+            case '9' :
+                {
+                    xuatFile(L);
+                    break;
+                }
             case '0': exit(1);
             default: printf("\nNhap lai.");
         }
@@ -480,16 +492,19 @@ void menu()
 
 /* ham xuat file
 */
-void xuatFile (LIST L,  char fileName1[])
+void xuatFile (LIST L)
 {
     FILE * fp;
     NODE* p;
     p = L.pHead;
-    fp = fopen (fileName1,"w");
+
+    fp = fopen ("F:\\HUONG GIANG\\lap trinh c\\ctqlsv.txt","w");
     while( p != NULL)
     {
     fprintf(fp, "%20s%5s%10s\n", "Ho Ten","MSSV", "DTB");
     fprintf(fp, "%20s%5s%10s\n", p -> info.ten, p -> info.MSSV, p -> info.dtb);
     p = p -> pNext;
     }
+
+    fclose(fp);
 }
