@@ -4,7 +4,7 @@
 #include <string.h>
 
 /* CHUONG TRINH QUAN LY SINH VIEN
-  function: nhap, in, xoa, them, chen, xuat file
+  function: nhap, in, xoa, them, xuat file
 */
 
 struct sv
